@@ -11,6 +11,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        showLog();
+    }
+
+    /**
+     * Very helpful method that helps the user show a STUPID HARDCODED LOG
+     */
+    private void showLog(){
         Log.d("TEST","Worked");
     }
 }
