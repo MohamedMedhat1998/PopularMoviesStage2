@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.andalus.abomed7at55.popularmoviesstage1.DetailsActivity">
+
+    <TextView
+        android:id="@+id/tv_original_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Original Title" />
+
+    <ImageView
+        android:id="@+id/iv_poster"
+        android:contentDescription="@string/iv_description_accessibility"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/btn_star" />
+
+    <TextView
+        android:id="@+id/tv_plot_synopsis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="plot synopsis" />
+
+    <TextView
+        android:id="@+id/tv_user_rating"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="user rating" />
+
+    <TextView
+        android:id="@+id/tv_release_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="release date" />
+</LinearLayout>
