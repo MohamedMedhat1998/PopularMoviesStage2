@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String test = ApiBuilder.buildApi(ApiBuilder.SORT_TOP_RATED);
+        String test = ApiBuilder.buildApi();
         Log.d("api",test);
 
         /*new AsyncTask<Object,Object,String>(){

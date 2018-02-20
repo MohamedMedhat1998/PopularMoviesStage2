@@ -34,7 +34,7 @@ public class ApiBuilder {
             uriBuilder.appendPath(PATH_SEGMENT_TOP_RATED);
         else if(sortBy == SORT_POPULAR)
             uriBuilder.appendPath(PATH_SEGMENT_POPULAR);
-        uriBuilder.appendQueryParameter(API_KEY,Keys.API_KEY);
+        uriBuilder.appendQueryParameter(API_KEY,BuildConfig.API_KEY);
         Uri uri = uriBuilder.build();
         return uri.toString();
     }
