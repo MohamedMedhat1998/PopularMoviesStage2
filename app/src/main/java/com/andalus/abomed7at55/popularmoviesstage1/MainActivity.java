@@ -14,7 +14,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new AsyncTask<Object,Object,String>(){
+        String test = ApiBuilder.buildApi(ApiBuilder.SORT_TOP_RATED);
+        Log.d("api",test);
+
+        /*new AsyncTask<Object,Object,String>(){
 
 
             @Override
@@ -33,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onPostExecute(s);
                 Log.d("DATA",s);
             }
-        }.execute();
+        }.execute();*/
     }
 
 }

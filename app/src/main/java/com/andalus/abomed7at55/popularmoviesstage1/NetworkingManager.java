@@ -19,10 +19,11 @@ public class NetworkingManager {
     private static final String REQUEST_GET = "GET";
     //This string holds the data coming from the connection
     private String jsonData;
-    // TODO Create a builder for the real API
+
     // TODO Access the real API
     // TODO Change main Activity to be a custom list view or recyclerView
     // TODO Display the posters in the main activity
+    // TODO Handle "there is no internet connection , couldn't retrieve data"
     /**
      * Use this method to start the connection
      * @param api the api that returns the json data
