@@ -1,11 +1,10 @@
 *.iml
 .gradle
 /local.properties
+/gradle.properties
 /.idea/workspace.xml
 /.idea/libraries
 .DS_Store
 /build
 /captures
 .externalNativeBuild
-\app\src\main\java\com\andalus\abomed7at55\popularmoviesstage1\Keys.java
-\app\src\main\java\com\andalus\abomed7at55\popularmoviesstage1\a.java
