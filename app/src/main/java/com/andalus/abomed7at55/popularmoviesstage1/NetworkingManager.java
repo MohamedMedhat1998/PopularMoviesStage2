@@ -20,7 +20,7 @@ public class NetworkingManager {
     //This string holds the data coming from the connection
     private String jsonData;
 
-    // TODO Access the real API
+
     // TODO Change main Activity to be a custom list view or recyclerView
     // TODO Display the posters in the main activity
     // TODO Handle "there is no internet connection , couldn't retrieve data"

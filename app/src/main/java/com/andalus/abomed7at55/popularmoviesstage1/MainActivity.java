@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
@@ -14,17 +16,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //ApiBuilder Test
-        String test = ApiBuilder.buildApi();
-        Log.d("api",test);
+        final String test = ApiBuilder.buildApi();
+        //Log.d("api",test);
 
-        /*new AsyncTask<Object,Object,String>(){
+        new AsyncTask<Object,Object,String>(){
 
 
             @Override
             protected String doInBackground(Object... objects) {
                 NetworkingManager manager = new NetworkingManager();
                 try {
-                    manager.startConnection("https://api.myjson.com/bins/kap5l");
+                    manager.startConnection(test);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -34,9 +36,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                Log.d("DATA",s);
+                //Log.d("DATA",s);
+                try {
+                    Movie[] movies = DataPicker.pickData(s);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-        }.execute();*/
+        }.execute();
     }
 
 }

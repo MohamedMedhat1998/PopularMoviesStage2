@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     tools:context="com.andalus.abomed7at55.popularmoviesstage1.MainActivity">
 
+    <!--TODO Replace This imageView with recyclerView -->
+
     <ImageView
         android:id="@+id/iv_main_poster"
         android:layout_width="175dp"
