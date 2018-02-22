@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     NetworkingManager networkingManager;
     MyBackgroundTask myBackgroundTask;
     MovieAdapter movieAdapter;
+    private static final int SETTINGS_REQUEST_CODE = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
                 movies = DataPicker.pickData(s);
                 movieAdapter = new MovieAdapter(movies);
                 mRecyclerView.setAdapter(movieAdapter);
-                Log.d("State","POSTED");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -103,14 +103,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.itm_open_settings){
-            startActivity(new Intent(MainActivity.this,SettingsActivity.class));
+            startActivityForResult(new Intent(MainActivity.this,SettingsActivity.class),SETTINGS_REQUEST_CODE);
         }
         return true;
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == SETTINGS_REQUEST_CODE && resultCode == RESULT_OK){
+            refreshAdapter();
+        }
+    }
+
+    public void refreshAdapter(){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int sortType = prefs.getInt(getString(R.string.pref_sort),ApiBuilder.SORT_POPULAR);
         api = ApiBuilder.buildApi(sortType);

@@ -49,13 +49,13 @@ public class SettingsActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putInt(getString(R.string.pref_sort),ApiBuilder.SORT_POPULAR);
                     editor.apply();
-                    finish();
                 }else if (id == R.id.rb_top_rated){
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putInt(getString(R.string.pref_sort),ApiBuilder.SORT_TOP_RATED);
                     editor.apply();
-                    finish();
                 }
+                setResult(RESULT_OK);
+                finish();
             }
         });
     }
