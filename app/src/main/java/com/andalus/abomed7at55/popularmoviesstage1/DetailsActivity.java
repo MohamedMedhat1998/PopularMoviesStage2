@@ -2,9 +2,12 @@ package com.andalus.abomed7at55.popularmoviesstage1;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -32,6 +35,11 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
 
         ButterKnife.bind(this);
+
+        ActionBar mActionBar = getSupportActionBar();
+        if(mActionBar != null){
+            mActionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         receiveAndShowData();
     }
@@ -73,5 +81,13 @@ public class DetailsActivity extends AppCompatActivity {
         tvRating.setText(rating);
         tvRating.setTextColor(ratingColor);
         tvReleaseDate.setText(releaseDate);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            NavUtils.navigateUpFromSameTask(this);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

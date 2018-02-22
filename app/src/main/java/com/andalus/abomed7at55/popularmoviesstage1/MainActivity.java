@@ -57,11 +57,6 @@ public class MainActivity extends AppCompatActivity {
 
         mRecyclerView.setLayoutManager(layoutManager);
 
-
-        // TODO add option for sorting
-        // TODO Add loading indicator in the main activity
-        // TODO Clean Code in the main activity
-        // TODO add back button
     }
 
     /**
