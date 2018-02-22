@@ -4,8 +4,13 @@
 
     <!--Intent Keys-->
     <string name="movie_position">movie_position</string>
+
+    <!-- Texts -->
     <string name="sort_by">Sort By</string>
     <string name="popular">Popular</string>
     <string name="top_rated">Top Rated</string>
     <string name="settings">Settings</string>
+
+    <!-- Preferences Keys -->
+    <string name="pref_sort">preference_sort</string>
 </resources>

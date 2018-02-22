@@ -49,7 +49,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
                 .error(android.R.drawable.stat_notify_error)
                 .into(holder.mainPoster);
     }
-
+    public void restartAdapter(Movie[] nMovies){
+        movies = nMovies;
+        notifyDataSetChanged();
+    }
     @Override
     public int getItemCount() {
         return movies.length;
