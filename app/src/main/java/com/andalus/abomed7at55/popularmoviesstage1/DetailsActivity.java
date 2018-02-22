@@ -1,6 +1,7 @@
 package com.andalus.abomed7at55.popularmoviesstage1;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -49,6 +50,19 @@ public class DetailsActivity extends AppCompatActivity {
         String plot = selectedMovie.getPlot();
         String rating = selectedMovie.getRating();
         String releaseDate = selectedMovie.getDate();
+        float ratingFloat = Float.parseFloat(rating);
+        int ratingColor;
+        if(ratingFloat >= 8){
+            ratingColor = getResources().getColor(R.color.rating_best);
+        }else if(ratingFloat >= 6){
+            ratingColor = getResources().getColor(R.color.rating_above_normal);
+        }else if(ratingFloat >= 4){
+            ratingColor = getResources().getColor(R.color.rating_normal);
+        }else if(ratingFloat >= 2){
+            ratingColor = getResources().getColor(R.color.rating_under_normal);
+        }else {
+            ratingColor = getResources().getColor(R.color.rating_worst);
+        }
         //Displaying
         tvOriginalTitle.setText(title);
         Picasso.with(this)
@@ -57,6 +71,7 @@ public class DetailsActivity extends AppCompatActivity {
                 .into(ivPoster);
         tvPlot.setText(plot);
         tvRating.setText(rating);
+        tvRating.setTextColor(ratingColor);
         tvReleaseDate.setText(releaseDate);
     }
 }

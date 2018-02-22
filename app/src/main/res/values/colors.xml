@@ -4,4 +4,11 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorTitle">#d50000</color>
+
+    <!-- Rating Colors -->
+    <color name="rating_best">#168873</color>
+    <color name="rating_above_normal">#AED367</color>
+    <color name="rating_normal">#E4D648</color>
+    <color name="rating_under_normal">#F59B50</color>
+    <color name="rating_worst">#EF4149</color>
 </resources>
