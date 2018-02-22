@@ -40,11 +40,14 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        api = ApiBuilder.buildApi();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int sortType = prefs.getInt(getString(R.string.pref_sort),ApiBuilder.SORT_POPULAR);
+
+        api = ApiBuilder.buildApi(sortType);
 
         networkingManager = new NetworkingManager();
 
-        myBackgroundTask = new MyBackgroundTask();
+        myBackgroundTask = new MyBackgroundTask(api);
 
         myBackgroundTask.execute();
 
@@ -64,11 +67,14 @@ public class MainActivity extends AppCompatActivity {
      * This class is responsible for running background threads
      */
     private class MyBackgroundTask extends AsyncTask<Object,Object,String>{
-
+        private String mApi;
+        public MyBackgroundTask(String api){
+            mApi = api;
+        }
         @Override
         protected String doInBackground(Object... objects) {
             try {
-                networkingManager.startConnection(api);
+                networkingManager.startConnection(mApi);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -100,6 +106,16 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(MainActivity.this,SettingsActivity.class));
         }
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int sortType = prefs.getInt(getString(R.string.pref_sort),ApiBuilder.SORT_POPULAR);
+        api = ApiBuilder.buildApi(sortType);
+        MyBackgroundTask myBackgroundTask = new MyBackgroundTask(api);
+        myBackgroundTask.execute();
     }
 
     /**
