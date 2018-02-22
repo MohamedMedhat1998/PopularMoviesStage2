@@ -18,7 +18,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
-
+    private static Movie[] movies;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onPostExecute(s);
                 //Log.d("DATA",s);
                 try {
-                    Movie[] movies = DataPicker.pickData(s);
+                    movies = DataPicker.pickData(s);
                     MovieAdapter adapter = new MovieAdapter(movies);
                     RecyclerView.LayoutManager layoutManager
                             = new GridLayoutManager(MainActivity.this,2, LinearLayoutManager.VERTICAL,false);
@@ -62,5 +62,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }.execute();
     }
-
+    public static Movie[] getMovies(){
+        return movies;
+    }
 }

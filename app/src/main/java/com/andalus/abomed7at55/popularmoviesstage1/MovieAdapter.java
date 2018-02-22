@@ -1,16 +1,14 @@
 package com.andalus.abomed7at55.popularmoviesstage1;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
-
-import java.util.zip.Inflater;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -71,7 +69,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
             mainPoster.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(view.getContext(),"DONE",Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(view.getContext(),DetailsActivity.class);
+                    i.putExtra(view.getContext().getString(R.string.movie_position),getAdapterPosition());
+                    view.getContext().startActivity(i);
                 }
             });
         }

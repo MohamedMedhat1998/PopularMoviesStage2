@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Popular Movies, Stage 1</string>
     <string name="iv_description_accessibility">The Poster of the movie</string>
+
+    <!--Intent Keys-->
+    <string name="movie_position">movie_position</string>
 </resources>
