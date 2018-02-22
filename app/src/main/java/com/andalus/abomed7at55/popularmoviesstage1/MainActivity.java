@@ -26,6 +26,11 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        // TODO add option for sorting
+        // TODO Add loading indicator in the main activity
+        // TODO Handle "there is no internet connection , couldn't retrieve data"
+        // TODO Clean Code in the main activity
+
         //ApiBuilder Test
         final String test = ApiBuilder.buildApi();
         //Log.d("api",test);
