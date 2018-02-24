@@ -13,4 +13,5 @@
 
     <!-- Preferences Keys -->
     <string name="pref_sort">preference_sort</string>
+    <string name="network_issue_message">Please Check Your Internet Connection</string>
 </resources>

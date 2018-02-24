@@ -50,7 +50,15 @@ public class MainActivity extends AppCompatActivity {
 
         myBackgroundTask = new MyBackgroundTask(api);
 
-        myBackgroundTask.execute();
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if(netInfo != null){
+            myBackgroundTask.execute();
+        }else {
+            Toast.makeText(getBaseContext(), R.string.network_issue_message,Toast.LENGTH_LONG).show();
+        }
+
 
         RecyclerView.LayoutManager layoutManager
                 = new GridLayoutManager(MainActivity.this,2, LinearLayoutManager.VERTICAL,false);
@@ -107,7 +115,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == SETTINGS_REQUEST_CODE && resultCode == RESULT_OK){
-            refreshAdapter();
+            ConnectivityManager cm =
+                    (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            if(netInfo != null){
+                refreshAdapter();
+            }else {
+                Toast.makeText(getBaseContext(), R.string.network_issue_message,Toast.LENGTH_LONG).show();
+            }
+
         }
     }
 
