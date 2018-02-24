@@ -20,16 +20,19 @@ import butterknife.ButterKnife;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder> {
 
     //The data
-    Movie[] movies;
+    private Movie[] movies;
 
-    Context mContext;
+    private Context mContext;
+
+    private AdapterClickListener mAdapterClickListener;
 
     /**
      * This constructor gives the adapter its initial data
      * @param moviesArray the movies array that contains data
      */
-    public MovieAdapter(Movie[] moviesArray){
+    public MovieAdapter(Movie[] moviesArray,AdapterClickListener clickListener){
         movies = moviesArray;
+        mAdapterClickListener = clickListener;
     }
 
     @Override
@@ -69,9 +72,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
             mainPoster.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent i = new Intent(view.getContext(),DetailsActivity.class);
-                    i.putExtra(view.getContext().getString(R.string.movie_position),getAdapterPosition());
-                    view.getContext().startActivity(i);
+                    mAdapterClickListener.onItemClicked(getAdapterPosition());
                 }
             });
         }

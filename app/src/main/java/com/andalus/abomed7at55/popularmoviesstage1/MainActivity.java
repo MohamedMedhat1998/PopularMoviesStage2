@@ -25,7 +25,7 @@ import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterClickListener {
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
     private static Movie[] movies;
@@ -67,6 +67,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onItemClicked(int itemPosition) {
+        Intent i = new Intent(MainActivity.this,DetailsActivity.class);
+        i.putExtra(getString(R.string.movie_position),itemPosition);
+        startActivity(i);
+    }
+
     /**
      * This class is responsible for running background threads
      */
@@ -90,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(s);
             try {
                 movies = DataPicker.pickData(s);
-                movieAdapter = new MovieAdapter(movies);
+                movieAdapter = new MovieAdapter(movies,MainActivity.this);
                 mRecyclerView.setAdapter(movieAdapter);
             } catch (JSONException e) {
                 e.printStackTrace();
