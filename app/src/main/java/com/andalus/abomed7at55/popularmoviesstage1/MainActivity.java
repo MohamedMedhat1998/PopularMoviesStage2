@@ -25,14 +25,14 @@ import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements AdapterClickListener {
+public class MainActivity extends AppCompatActivity implements AdapterClickListener , MyBackgroundTaskCallBacks<String,String> {
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
     private static Movie[] movies;
     String api;
     NetworkingManager networkingManager;
-    MyBackgroundTask myBackgroundTask;
     MovieAdapter movieAdapter;
+    MyBackgroundTask backgroundTask;
     private static final int SETTINGS_REQUEST_CODE = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,13 +48,13 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
 
         networkingManager = new NetworkingManager();
 
-        myBackgroundTask = new MyBackgroundTask(api);
+        backgroundTask = new MyBackgroundTask(api,this);
 
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         if(netInfo != null){
-            myBackgroundTask.execute();
+            backgroundTask.execute();
         }else {
             Toast.makeText(getBaseContext(), R.string.network_issue_message,Toast.LENGTH_LONG).show();
         }
@@ -74,36 +74,7 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
         startActivity(i);
     }
 
-    /**
-     * This class is responsible for running background threads
-     */
-    private class MyBackgroundTask extends AsyncTask<Object,Object,String>{
-        private String mApi;
-        public MyBackgroundTask(String api){
-            mApi = api;
-        }
-        @Override
-        protected String doInBackground(Object... objects) {
-            try {
-                networkingManager.startConnection(mApi);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return networkingManager.retrieveData();
-        }
 
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            try {
-                movies = DataPicker.pickData(s);
-                movieAdapter = new MovieAdapter(movies,MainActivity.this);
-                mRecyclerView.setAdapter(movieAdapter);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = new MenuInflater(this);
@@ -138,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int sortType = prefs.getInt(getString(R.string.pref_sort),ApiBuilder.SORT_POPULAR);
         api = ApiBuilder.buildApi(sortType);
-        MyBackgroundTask myBackgroundTask = new MyBackgroundTask(api);
+        MyBackgroundTask myBackgroundTask = new MyBackgroundTask(api,this);
         myBackgroundTask.execute();
     }
 
@@ -148,5 +119,26 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
      */
     public static Movie[] getMovies(){
         return movies;
+    }
+
+    @Override
+    public String onBackground(String api) {
+        try {
+            networkingManager.startConnection(api);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return networkingManager.retrieveData();
+    }
+
+    @Override
+    public void onTaskFinished(String result) {
+        try {
+            movies = DataPicker.pickData(result);
+            movieAdapter = new MovieAdapter(movies,MainActivity.this);
+            mRecyclerView.setAdapter(movieAdapter);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
