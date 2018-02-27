@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -39,11 +40,11 @@ public class DetailsActivity extends AppCompatActivity implements MyBackgroundTa
     private static final int RATING_NORMAL = 4;
     private static final int RATING_UNDER_NORMAL = 2;
 
-    private static final int FLAG_REVIEW = 0;
-    private static final int FLAG_VIDEO = 1;
+    private static final char FLAG_REVIEW = 'R';
+    private static final char FLAG_VIDEO = 'V';
 
     private String id;
-    private int flag;
+    private char flag;
 
     private MyBackgroundTask myBackgroundTask;
     private NetworkingManager networkingReview;
@@ -141,14 +142,10 @@ public class DetailsActivity extends AppCompatActivity implements MyBackgroundTa
     public String onBackground(String data) {
         String result = null;
         try {
-            if (flag == FLAG_VIDEO) {
-                networkingVideos.startConnection(data);
-                result = networkingVideos.retrieveData();
-            }
-            if (flag == FLAG_REVIEW) {
-                networkingReview.startConnection(data);
-                result = networkingReview.retrieveData();
-            }
+            networkingVideos.startConnection(data);
+            result = FLAG_VIDEO+networkingVideos.retrieveData();
+            networkingReview.startConnection(data);
+            result = FLAG_REVIEW+networkingReview.retrieveData();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -158,12 +155,30 @@ public class DetailsActivity extends AppCompatActivity implements MyBackgroundTa
     @Override
     public void onTaskFinished(String result) {
         if(result == null) return;
+        if (result.charAt(0)==FLAG_VIDEO) {
+            //Log.d("VIDEO",result);
+            result = resetResult(result);
+        }
+        if (result.charAt(0)==FLAG_REVIEW) {
+            result = resetResult(result);
+            try {
+                MovieReview[] movieReviews = DataPicker.pickReviews(result);
+                // TODO create an adapter and recycler view for the reviews
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-        if (flag == FLAG_VIDEO) {
-            Log.d("VIDEO",result);
-        }
-        if (flag == FLAG_REVIEW) {
-            Log.d("REVIEW",result);
-        }
+    /**
+     * This method is a special method for resetting the json data only. It removes the first char
+     * which represents a token or flag
+     * @param result the json data to be reset
+     */
+    private String resetResult(String result){
+        StringBuilder stringBuilder = new StringBuilder(result);
+        stringBuilder.deleteCharAt(0);
+        result = stringBuilder.toString();
+        return result;
     }
 }

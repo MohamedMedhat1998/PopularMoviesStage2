@@ -1,8 +1,40 @@
 package com.andalus.abomed7at55.popularmoviesstage1;
 
 /**
- * Created by AboMed7at on 2/27/2018.
+ * This class represents one review for a specific {@link Movie} object
  */
-// TODO fill that class with the corresponding attributes from the json
+
 public class MovieReview {
+
+    private String mId,mAuthor,mContent,mUrl;
+
+    /**
+     * This constructor fills the whole reivew information
+     * @param id the id of the review
+     * @param author the author of the review
+     * @param content the content of the review
+     * @param url the link of the review
+     */
+    public MovieReview(String id,String author,String content,String url){
+        mId = id;
+        mAuthor = author;
+        mContent = content;
+        mUrl = url;
+    }
+
+    public String getId() {
+        return mId;
+    }
+
+    public String getAuthor() {
+        return mAuthor;
+    }
+
+    public String getContent() {
+        return mContent;
+    }
+
+    public String getUrl() {
+        return mUrl;
+    }
 }

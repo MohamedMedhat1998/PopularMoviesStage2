@@ -19,7 +19,11 @@ public class DataPicker {
     private static final String RESULT_ARRAY = "results";
     private static final String ID = "id";
 
-    //JSON Keys for trailers and reviews
+    //JSON Keys for reviews
+    private static final String AUTHOR = "author";
+    private static final String CONTENT = "content";
+    private static final String URL_MOVIE = "url";
+
 
     /**
      * This method converts the JSON data to movie objects so that it can be used elsewhere
@@ -46,6 +50,29 @@ public class DataPicker {
         }
         return movies;
     }
-// TODO create a function for picking the reviews
 // TODO create a function for picking the videos
+
+    /**
+     * This method converts the JSON data to review objects so that it can be used elsewhere
+     * @param jsonData The Json data retrieved from the networking connection
+     * @return Review array holding usable data
+     * @throws JSONException if the json passed was incorrect
+     */
+    public static MovieReview[] pickReviews(String jsonData) throws JSONException {
+        JSONObject mainObject = new JSONObject(jsonData);
+        JSONArray resultArray = mainObject.getJSONArray(RESULT_ARRAY);
+        int n = resultArray.length();
+        MovieReview[] reviews = new MovieReview[n];
+        JSONObject tempObject;
+        String id,author,content,url;
+        for (int i = 0 ; i < n ; i++){
+            tempObject = resultArray.getJSONObject(i);
+            id = tempObject.getString(ID);
+            author = tempObject.getString(AUTHOR);
+            content = tempObject.getString(CONTENT);
+            url = tempObject.getString(URL_MOVIE);
+            reviews[i] = new MovieReview(id,author,content,url);
+        }
+        return reviews;
+    }
 }
