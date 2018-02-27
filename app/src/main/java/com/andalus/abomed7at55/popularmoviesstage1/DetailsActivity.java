@@ -13,10 +13,14 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity implements MyBackgroundTaskCallBacks<String, String> {
 
     @BindView(R.id.tv_original_title)
     TextView tvOriginalTitle;
@@ -29,6 +33,22 @@ public class DetailsActivity extends AppCompatActivity {
     @BindView(R.id.tv_release_date)
     TextView tvReleaseDate;
 
+    //Rating Colors
+    private static final int RATING_HIGHEST = 8;
+    private static final int RATING_ABOVE_NORMAL = 6;
+    private static final int RATING_NORMAL = 4;
+    private static final int RATING_UNDER_NORMAL = 2;
+
+    private static final int FLAG_REVIEW = 0;
+    private static final int FLAG_VIDEO = 1;
+
+    private String id;
+    private int flag;
+
+    private MyBackgroundTask myBackgroundTask;
+    private NetworkingManager networkingReview;
+    private NetworkingManager networkingVideos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +57,7 @@ public class DetailsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         ActionBar mActionBar = getSupportActionBar();
-        if(mActionBar != null){
+        if (mActionBar != null) {
             mActionBar.setDisplayHomeAsUpEnabled(true);
         }
 
@@ -48,7 +68,7 @@ public class DetailsActivity extends AppCompatActivity {
      * This method brings the data from the selected movie in the main activity class and displays
      * them in the details activity
      */
-    private void receiveAndShowData(){
+    private void receiveAndShowData() {
         //Receiving
         Intent i = getIntent();
         int position = i.getExtras().getInt(getString(R.string.movie_position));
@@ -58,17 +78,18 @@ public class DetailsActivity extends AppCompatActivity {
         String plot = selectedMovie.getPlot();
         String rating = selectedMovie.getRating();
         String releaseDate = selectedMovie.getDate();
+        id = selectedMovie.getId();
         float ratingFloat = Float.parseFloat(rating);
         int ratingColor;
-        if(ratingFloat >= 8){
+        if (ratingFloat >= RATING_HIGHEST) {
             ratingColor = getResources().getColor(R.color.rating_best);
-        }else if(ratingFloat >= 6){
+        } else if (ratingFloat >= RATING_ABOVE_NORMAL) {
             ratingColor = getResources().getColor(R.color.rating_above_normal);
-        }else if(ratingFloat >= 4){
+        } else if (ratingFloat >= RATING_NORMAL) {
             ratingColor = getResources().getColor(R.color.rating_normal);
-        }else if(ratingFloat >= 2){
+        } else if (ratingFloat >= RATING_UNDER_NORMAL) {
             ratingColor = getResources().getColor(R.color.rating_under_normal);
-        }else {
+        } else {
             ratingColor = getResources().getColor(R.color.rating_worst);
         }
         //Displaying
@@ -81,13 +102,68 @@ public class DetailsActivity extends AppCompatActivity {
         tvRating.setText(rating);
         tvRating.setTextColor(ratingColor);
         tvReleaseDate.setText(releaseDate);
+        reviews();
+        videos();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
         }
         return super.onOptionsItemSelected(item);
+    }
+    /**
+     * This method handles the whole process for displaying reviews
+     */
+    private void reviews() {
+        flag = FLAG_REVIEW;
+        //Reviews
+        networkingReview = new NetworkingManager();
+        String apiReview = ApiBuilder.buildApi(id, ApiBuilder.REVIEW);
+        myBackgroundTask = new MyBackgroundTask(apiReview, this);
+        myBackgroundTask.execute();
+    }
+
+    /**
+     * This method handles the whole process for displaying trailers
+     */
+    private void videos() {
+        flag = FLAG_VIDEO;
+        //videos
+        networkingVideos = new NetworkingManager();
+        String apiVideos = ApiBuilder.buildApi(id, ApiBuilder.VIDEOS);
+        myBackgroundTask = new MyBackgroundTask(apiVideos, this);
+        myBackgroundTask.execute();
+    }
+
+    @Override
+    public String onBackground(String data) {
+        String result = null;
+        try {
+            if (flag == FLAG_VIDEO) {
+                networkingVideos.startConnection(data);
+                result = networkingVideos.retrieveData();
+            }
+            if (flag == FLAG_REVIEW) {
+                networkingReview.startConnection(data);
+                result = networkingReview.retrieveData();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    @Override
+    public void onTaskFinished(String result) {
+        if(result == null) return;
+
+        if (flag == FLAG_VIDEO) {
+            Log.d("VIDEO",result);
+        }
+        if (flag == FLAG_REVIEW) {
+            Log.d("REVIEW",result);
+        }
     }
 }

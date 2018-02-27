@@ -17,6 +17,9 @@ public class DataPicker {
     private static final String USER_RATING = "vote_average";
     private static final String RELEASE_DATE = "release_date";
     private static final String RESULT_ARRAY = "results";
+    private static final String ID = "id";
+
+    //JSON Keys for trailers and reviews
 
     /**
      * This method converts the JSON data to movie objects so that it can be used elsewhere
@@ -30,7 +33,7 @@ public class DataPicker {
         int n = resultArray.length();
         Movie[] movies = new Movie[n];
         JSONObject tempObject;
-        String title,poster,plot,rating,date;
+        String title,poster,plot,rating,date,id;
         for(int i = 0 ; i < n ; i++){
             tempObject = resultArray.getJSONObject(i);
             title = tempObject.getString(ORIGINAL_TITLE);
@@ -38,9 +41,11 @@ public class DataPicker {
             plot = tempObject.getString(A_PLOT_SYNOPSIS);
             rating = tempObject.getString(USER_RATING);
             date = tempObject.getString(RELEASE_DATE);
-            movies[i] = new Movie(title,poster,plot,rating,date);
+            id = tempObject.getString(ID);
+            movies[i] = new Movie(title,poster,plot,rating,date,id);
         }
         return movies;
     }
-
+// TODO create a function for picking the reviews
+// TODO create a function for picking the videos
 }

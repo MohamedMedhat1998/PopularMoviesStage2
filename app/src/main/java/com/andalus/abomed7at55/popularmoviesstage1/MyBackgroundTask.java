@@ -10,8 +10,10 @@ import java.io.IOException;
  * This class is responsible for running background threads
  */
 public class MyBackgroundTask extends AsyncTask<Object,Object,String> {
+
     private String mApi;
     private MyBackgroundTaskCallBacks<String,String> mCallBacks;
+
     public MyBackgroundTask(String api,MyBackgroundTaskCallBacks callBacks){
         mApi = api;
         mCallBacks = callBacks;

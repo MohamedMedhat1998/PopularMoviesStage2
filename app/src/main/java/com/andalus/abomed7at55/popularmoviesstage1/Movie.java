@@ -6,7 +6,7 @@ package com.andalus.abomed7at55.popularmoviesstage1;
 
 public class Movie {
     //Movie data
-    private String title,poster,plot,rating,date;
+    private String title,poster,plot,rating,date,id;
     private static final String BASE_URL = "http://image.tmdb.org/t/p/w185";
 
     /**
@@ -17,12 +17,13 @@ public class Movie {
      * @param userRating users rating to the movie
      * @param releaseDate the release date of the movie
      */
-    public Movie(String originalTitle , String posterPath , String aPlotSynopsis,String userRating,String releaseDate){
+    public Movie(String originalTitle , String posterPath , String aPlotSynopsis,String userRating,String releaseDate,String movieId){
         title = originalTitle;
         poster = posterPath;
         plot = aPlotSynopsis;
         rating = userRating;
         date = releaseDate;
+        id = movieId;
     }
 
     public String getTitle() {
@@ -43,5 +44,9 @@ public class Movie {
 
     public String getDate() {
         return date;
+    }
+
+    public String getId(){
+        return id;
     }
 }

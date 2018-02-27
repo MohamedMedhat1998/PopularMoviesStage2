@@ -4,6 +4,7 @@
 
     <!--Intent Keys-->
     <string name="movie_position">movie_position</string>
+    <string name="movie_id">movie_id</string>
 
     <!-- Texts -->
     <string name="sort_by">Sort By</string>
