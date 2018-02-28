@@ -2,10 +2,13 @@ package com.andalus.abomed7at55.popularmoviesstage1;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -21,7 +24,7 @@ import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DetailsActivity extends AppCompatActivity implements MyBackgroundTaskCallBacks<String, String> {
+public class DetailsActivity extends AppCompatActivity implements MyBackgroundTaskCallBacks<String, String>{
 
     @BindView(R.id.tv_original_title)
     TextView tvOriginalTitle;
@@ -33,6 +36,8 @@ public class DetailsActivity extends AppCompatActivity implements MyBackgroundTa
     TextView tvRating;
     @BindView(R.id.tv_release_date)
     TextView tvReleaseDate;
+    @BindView(R.id.review_recycler_view)
+    RecyclerView mRecyclerView;
 
     //Rating Colors
     private static final int RATING_HIGHEST = 8;
@@ -44,7 +49,6 @@ public class DetailsActivity extends AppCompatActivity implements MyBackgroundTa
     private static final char FLAG_VIDEO = 'V';
 
     private String id;
-    private char flag;
 
     private MyBackgroundTask myBackgroundTask;
     private NetworkingManager networkingReview;
@@ -63,6 +67,10 @@ public class DetailsActivity extends AppCompatActivity implements MyBackgroundTa
         }
 
         receiveAndShowData();
+
+        //RecyclerView setting up
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
+        mRecyclerView.setLayoutManager(layoutManager);
     }
 
     /**
@@ -118,7 +126,6 @@ public class DetailsActivity extends AppCompatActivity implements MyBackgroundTa
      * This method handles the whole process for displaying reviews
      */
     private void reviews() {
-        flag = FLAG_REVIEW;
         //Reviews
         networkingReview = new NetworkingManager();
         String apiReview = ApiBuilder.buildApi(id, ApiBuilder.REVIEW);
@@ -130,7 +137,6 @@ public class DetailsActivity extends AppCompatActivity implements MyBackgroundTa
      * This method handles the whole process for displaying trailers
      */
     private void videos() {
-        flag = FLAG_VIDEO;
         //videos
         networkingVideos = new NetworkingManager();
         String apiVideos = ApiBuilder.buildApi(id, ApiBuilder.VIDEOS);
@@ -155,15 +161,27 @@ public class DetailsActivity extends AppCompatActivity implements MyBackgroundTa
     @Override
     public void onTaskFinished(String result) {
         if(result == null) return;
+
         if (result.charAt(0)==FLAG_VIDEO) {
-            //Log.d("VIDEO",result);
             result = resetResult(result);
+            try {
+                MovieVideo[] movieVideos = DataPicker.pickVideos(result);
+                //TODO add adapter and recyclerView for movies
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         if (result.charAt(0)==FLAG_REVIEW) {
             result = resetResult(result);
             try {
-                MovieReview[] movieReviews = DataPicker.pickReviews(result);
-                // TODO create an adapter and recycler view for the reviews
+                final MovieReview[] movieReviews = DataPicker.pickReviews(result);
+                ReviewsAdapter reviewsAdapter = new ReviewsAdapter(movieReviews, new AdapterClickListener() {
+                    @Override
+                    public void onItemClicked(int itemPosition) {
+                        openLink(movieReviews[itemPosition].getUrl());
+                    }
+                });
+                mRecyclerView.setAdapter(reviewsAdapter);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -180,5 +198,14 @@ public class DetailsActivity extends AppCompatActivity implements MyBackgroundTa
         stringBuilder.deleteCharAt(0);
         result = stringBuilder.toString();
         return result;
+    }
+
+    /**
+     * This method opens the given link in the browser
+     * @param url the link to be opened
+     */
+    private void openLink(String url){
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(intent);
     }
 }

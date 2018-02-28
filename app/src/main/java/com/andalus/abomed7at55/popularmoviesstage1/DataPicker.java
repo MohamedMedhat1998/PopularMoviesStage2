@@ -24,6 +24,10 @@ public class DataPicker {
     private static final String CONTENT = "content";
     private static final String URL_MOVIE = "url";
 
+    //JSON Keys for videos
+    private static final String NAME = "name";
+    private static final String KEY = "key";
+
 
     /**
      * This method converts the JSON data to movie objects so that it can be used elsewhere
@@ -50,7 +54,6 @@ public class DataPicker {
         }
         return movies;
     }
-// TODO create a function for picking the videos
 
     /**
      * This method converts the JSON data to review objects so that it can be used elsewhere
@@ -74,5 +77,26 @@ public class DataPicker {
             reviews[i] = new MovieReview(id,author,content,url);
         }
         return reviews;
+    }
+
+    /**
+     * This method converts the JSON data to video objects so that it can be used elsewhere
+     * @param jsonData The Json data retrieved from the networking connection
+     * @return Video array holding usable data
+     * @throws JSONException if the json passed was incorrect
+     */
+    public static MovieVideo[] pickVideos(String jsonData) throws JSONException{
+        JSONObject mainObject = new JSONObject(jsonData);
+        JSONArray resultArray = mainObject.getJSONArray(RESULT_ARRAY);
+        int n = resultArray.length();
+        MovieVideo[] videos = new MovieVideo[n];
+        JSONObject tempObject;
+        String name,key;
+        for (int i = 0 ; i < n ; i++){
+            tempObject = resultArray.getJSONObject(i);
+            name = tempObject.getString(NAME);
+            key = tempObject.getString(KEY);
+        }
+        return videos;
     }
 }

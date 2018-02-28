@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorTitle">#d50000</color>
+    <color name="colorView">#cfd8dc</color>
+    <color name="colorBlack">#000000</color>
 
     <!-- Rating Colors -->
     <color name="rating_best">#168873</color>

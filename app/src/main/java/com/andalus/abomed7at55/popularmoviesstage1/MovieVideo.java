@@ -1,8 +1,27 @@
 package com.andalus.abomed7at55.popularmoviesstage1;
 
 /**
- * Created by AboMed7at on 2/27/2018.
+ * This class represents one video for a specific {@link Movie} object
  */
-// TODO fill that class with the corresponding attributes from the json
 public class MovieVideo {
+
+    private String mName,mKey;
+
+    /**
+     * This constructor fills the whole video information
+     * @param name the name of the video
+     * @param key the id of the video
+     */
+    MovieVideo(String name , String key){
+        mName = name;
+        mKey = key;
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    public String getKey() {
+        return mKey;
+    }
 }

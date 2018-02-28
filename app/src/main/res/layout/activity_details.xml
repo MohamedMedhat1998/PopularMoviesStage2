@@ -10,7 +10,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context="com.andalus.abomed7at55.popularmoviesstage1.DetailsActivity">
-
+    <!--TODO improve the UI -->
     <TextView
         android:id="@+id/tv_original_title"
         android:layout_width="0dp"
@@ -50,6 +50,28 @@
         tools:text="plot synopsis"
         android:layout_marginRight="8dp" />
 
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height"
+        android:background="@color/colorView"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_plot_synopsis" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/review_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
     <TextView
         android:id="@+id/tv_user_rating"
         android:layout_width="66dp"
@@ -57,6 +79,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/iv_poster"
         app:layout_constraintTop_toBottomOf="@+id/tv_release_date"
         tools:text="user rating"

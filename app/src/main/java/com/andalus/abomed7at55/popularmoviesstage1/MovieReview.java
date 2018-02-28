@@ -9,7 +9,7 @@ public class MovieReview {
     private String mId,mAuthor,mContent,mUrl;
 
     /**
-     * This constructor fills the whole reivew information
+     * This constructor fills the whole review information
      * @param id the id of the review
      * @param author the author of the review
      * @param content the content of the review
