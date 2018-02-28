@@ -5,6 +5,8 @@ package com.andalus.abomed7at55.popularmoviesstage1;
  */
 public class MovieVideo {
 
+    public static final String YOUTUBE_BASE = "https://www.youtube.com/watch?v=";
+
     private String mName,mKey;
 
     /**

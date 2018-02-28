@@ -38,6 +38,8 @@ public class DetailsActivity extends AppCompatActivity implements MyBackgroundTa
     TextView tvReleaseDate;
     @BindView(R.id.review_recycler_view)
     RecyclerView mRecyclerView;
+    @BindView(R.id.rv_videos)
+    RecyclerView videoRecyclerView;
 
     //Rating Colors
     private static final int RATING_HIGHEST = 8;
@@ -71,6 +73,8 @@ public class DetailsActivity extends AppCompatActivity implements MyBackgroundTa
         //RecyclerView setting up
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
         mRecyclerView.setLayoutManager(layoutManager);
+        RecyclerView.LayoutManager videoLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
+        videoRecyclerView.setLayoutManager(videoLayoutManager);
     }
 
     /**
@@ -161,12 +165,19 @@ public class DetailsActivity extends AppCompatActivity implements MyBackgroundTa
     @Override
     public void onTaskFinished(String result) {
         if(result == null) return;
-
+        //TODO fix this bug
         if (result.charAt(0)==FLAG_VIDEO) {
+            Log.d("Here","I came here");
             result = resetResult(result);
             try {
-                MovieVideo[] movieVideos = DataPicker.pickVideos(result);
-                //TODO add adapter and recyclerView for movies
+                final MovieVideo[] movieVideos = DataPicker.pickVideos(result);
+                VideosAdapter videosAdapter = new VideosAdapter(movieVideos, new AdapterClickListener() {
+                    @Override
+                    public void onItemClicked(int itemPosition) {
+                        openLink(MovieVideo.YOUTUBE_BASE+movieVideos[itemPosition].getKey());
+                    }
+                });
+                videoRecyclerView.setAdapter(videosAdapter);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

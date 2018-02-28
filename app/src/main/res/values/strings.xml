@@ -15,4 +15,7 @@
     <!-- Preferences Keys -->
     <string name="pref_sort">preference_sort</string>
     <string name="network_issue_message">Please Check Your Internet Connection</string>
+    <string name="trailer_icon">Trailer Icon</string>
+    <string name="reviews">Reviews</string>
+    <string name="trailers">Trailers</string>
 </resources>
