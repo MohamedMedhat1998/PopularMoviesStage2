@@ -3,6 +3,7 @@ package com.andalus.abomed7at55.popularmoviesstage1;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -40,6 +41,9 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+
+        DatabaseManager databaseManager = new DatabaseManager(this);
+        SQLiteDatabase database = databaseManager.getDatabase();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int sortType = prefs.getInt(getString(R.string.pref_sort),ApiBuilder.SORT_POPULAR);
@@ -105,6 +109,9 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
         }
     }
 
+    /**
+     * This method updates the shown movies when the user changes sort type
+     */
     public void refreshAdapter(){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int sortType = prefs.getInt(getString(R.string.pref_sort),ApiBuilder.SORT_POPULAR);
