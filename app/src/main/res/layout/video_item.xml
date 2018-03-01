@@ -8,20 +8,21 @@
 
     <ImageView
         android:id="@+id/iv_trailer"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:contentDescription="@string/trailer_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/play_btn"
-        android:layout_marginLeft="8dp" />
+        app:srcCompat="@drawable/play_btn" />
 
     <TextView
         android:id="@+id/tv_trailer_label"
         android:layout_width="0dp"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"

@@ -18,4 +18,6 @@
     <string name="trailer_icon">Trailer Icon</string>
     <string name="reviews">Reviews</string>
     <string name="trailers">Trailers</string>
+    <string name="no_trailers_found">No Trailers Found</string>
+    <string name="no_reviews_found">No Reviews Found</string>
 </resources>

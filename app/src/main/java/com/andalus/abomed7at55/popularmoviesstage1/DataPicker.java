@@ -96,6 +96,7 @@ public class DataPicker {
             tempObject = resultArray.getJSONObject(i);
             name = tempObject.getString(NAME);
             key = tempObject.getString(KEY);
+            videos[i] = new MovieVideo(name,key);
         }
         return videos;
     }
