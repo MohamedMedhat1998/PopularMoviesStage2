@@ -1,11 +1,15 @@
 package com.andalus.abomed7at55.popularmoviesstage1;
 
+import android.content.ContentProvider;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -41,9 +45,16 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-
+        //--------------------------------------------------------------------
         DatabaseManager databaseManager = new DatabaseManager(this);
         SQLiteDatabase database = databaseManager.getDatabase();
+        Uri myUri = MoviesContentProvider.buildAppUri("55");
+        Log.d("URI" , myUri.toString());
+        ContentResolver resolver = getContentResolver();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DatabaseContract._ID,55);
+        resolver.insert(myUri,null);
+        //--------------------------------------------------------------------
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int sortType = prefs.getInt(getString(R.string.pref_sort),ApiBuilder.SORT_POPULAR);

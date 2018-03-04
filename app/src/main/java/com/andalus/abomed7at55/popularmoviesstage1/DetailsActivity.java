@@ -2,6 +2,8 @@ package com.andalus.abomed7at55.popularmoviesstage1;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
@@ -14,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -116,8 +119,14 @@ public class DetailsActivity extends AppCompatActivity {
         tvRating.setText(rating);
         tvRating.setTextColor(ratingColor);
         tvReleaseDate.setText(releaseDate);
-        reviews();
-        videos();
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        if(networkInfo != null){
+            reviews();
+            videos();
+        }else {
+            Toast.makeText(getBaseContext(), R.string.network_issue_message,Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
