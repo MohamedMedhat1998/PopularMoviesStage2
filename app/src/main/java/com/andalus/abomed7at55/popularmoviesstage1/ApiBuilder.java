@@ -24,6 +24,7 @@ public class ApiBuilder {
     //sort types
     public static final int SORT_TOP_RATED = 0;
     public static final int SORT_POPULAR = 1;
+    public static final int SORT_FAVORITE = 4;
 
     //Trailer or Review
     public static final int VIDEOS = 2;

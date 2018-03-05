@@ -21,14 +21,16 @@ public class MoviesContentProvider extends ContentProvider {
     private static final String AUTHORITY = "com.andalus.abomed7at55.popularmoviesstage1";
     private static final String SCHEME = "content://";
     private static final String PATH_SINGLE_MOVIE = "movie";
+    private static final String PATH_ALL_MOVIES = "all";
+
     private static final int SINGLE_MOVIE = 100;
+    private static final int ALL_MOVIES = 200;
+
     private SQLiteDatabase database;
     UriMatcher uriMatcher;
-    //TODO complete the uri builder
 
     /**
-     * This method builds a uri that matches the matcher in the content provider
-     *
+     * This method builds a uri for a single movie
      * @param movieId the id of the movie you want to access
      * @return a uri object
      */
@@ -41,6 +43,18 @@ public class MoviesContentProvider extends ContentProvider {
     }
 
     /**
+     * This method builds a uri for all movies
+     * @return a uri object
+     */
+    public static Uri buildAppUri() {
+        Uri.Builder builder = Uri.parse(SCHEME + AUTHORITY)
+                .buildUpon()
+                .appendPath(PATH_SINGLE_MOVIE)
+                .appendPath(PATH_ALL_MOVIES);
+        return builder.build();
+    }
+
+    /**
      * This method builds the matcher which analyze the uris
      *
      * @return a matcher object
@@ -48,6 +62,7 @@ public class MoviesContentProvider extends ContentProvider {
     private UriMatcher buildMatcher() {
         UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         matcher.addURI(AUTHORITY, PATH_SINGLE_MOVIE + "/#", SINGLE_MOVIE);
+        matcher.addURI(AUTHORITY, PATH_ALL_MOVIES , ALL_MOVIES);
         return matcher;
     }
 
@@ -60,15 +75,17 @@ public class MoviesContentProvider extends ContentProvider {
      * @param synopsis the synopsis of the selected movie
      * @param rating   the rating of the selected movie
      * @param date     the release date of the selected movie
+     * @param image    the image key in the api
      * @return a ContentValues object
      */
-    public static ContentValues createContentValues(long id, String name, String synopsis, String rating, String date) {
+    public static ContentValues createContentValues(long id, String name, String synopsis, String rating, String date,String image) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(DatabaseContract._ID, id);
         contentValues.put(TableFavourites.COLUMN_NAME, name);
         contentValues.put(TableFavourites.COLUMN_SYNOPSIS, synopsis);
         contentValues.put(TableFavourites.COLUMN_RATING, rating);
         contentValues.put(TableFavourites.COLUMN_DATE, date);
+        contentValues.put(TableFavourites.COLUMN_IMAGE, image);
         return contentValues;
     }
 
@@ -83,7 +100,21 @@ public class MoviesContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] strings, @Nullable String s, @Nullable String[] strings1, @Nullable String s1) {
-        return null;
+        Cursor cursor = null;
+        if(uriMatcher.match(uri) == ALL_MOVIES){
+            try {
+                cursor = database.query(TableFavourites.TABLE_NAME,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        TableFavourites.COLUMN_NAME);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return cursor;
     }
 
     @Nullable
@@ -112,14 +143,12 @@ public class MoviesContentProvider extends ContentProvider {
         if(uriMatcher.match(uri) == SINGLE_MOVIE){
             try {
                 String idString = uri.getPathSegments().get(1) + "";
-                Log.d("idString",idString);
                 deleted = database.delete(TableFavourites.TABLE_NAME,DatabaseContract._ID + "=?",new String[]{idString});
             }catch (Exception e){
                 e.printStackTrace();
             }
         }
         getContext().getContentResolver().notifyChange(uri,null);
-        Log.d("Deleted",deleted + "");
         return deleted;
     }
 

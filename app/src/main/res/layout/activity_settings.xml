@@ -38,5 +38,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/top_rated" />
+
+        <RadioButton
+            android:id="@+id/rb_favourite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/favourite"/>
     </RadioGroup>
 </LinearLayout>

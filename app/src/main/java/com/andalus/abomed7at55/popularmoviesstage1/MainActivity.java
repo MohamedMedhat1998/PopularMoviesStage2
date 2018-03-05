@@ -38,7 +38,9 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
     NetworkingManager networkingManager;
     MovieAdapter movieAdapter;
     MyBackgroundTask backgroundTask;
+
     private static final int SETTINGS_REQUEST_CODE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,21 +54,25 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int sortType = prefs.getInt(getString(R.string.pref_sort),ApiBuilder.SORT_POPULAR);
 
-        api = ApiBuilder.buildApi(sortType);
+        if(sortType != ApiBuilder.SORT_FAVORITE){
+            api = ApiBuilder.buildApi(sortType);
 
-        networkingManager = new NetworkingManager();
+            networkingManager = new NetworkingManager();
 
-        backgroundTask = new MyBackgroundTask(api,this);
+            backgroundTask = new MyBackgroundTask(api,this);
 
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        if(netInfo != null){
-            backgroundTask.execute();
-        }else {
-            Toast.makeText(getBaseContext(), R.string.network_issue_message,Toast.LENGTH_LONG).show();
+            ConnectivityManager cm =
+                    (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            if(netInfo != null){
+                backgroundTask.execute();
+            }else {
+                //TODO query the favorite here if there is no connection
+                Toast.makeText(getBaseContext(), R.string.network_issue_message,Toast.LENGTH_LONG).show();
+            }
+        }else{
+            //TODO query the favorite if the selected sort was ApiBuilder.SORT_FAVORITE
         }
-
 
         RecyclerView.LayoutManager layoutManager
                 = new GridLayoutManager(MainActivity.this,2, LinearLayoutManager.VERTICAL,false);
@@ -100,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == SETTINGS_REQUEST_CODE && resultCode == RESULT_OK){
+        if(requestCode == SETTINGS_REQUEST_CODE && resultCode == SettingsActivity.RESULT_NORMAL){
             ConnectivityManager cm =
                     (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo netInfo = cm.getActiveNetworkInfo();
@@ -109,7 +115,8 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
             }else {
                 Toast.makeText(getBaseContext(), R.string.network_issue_message,Toast.LENGTH_LONG).show();
             }
-
+        }else if(requestCode == SETTINGS_REQUEST_CODE && resultCode == SettingsActivity.RESULT_FAVOURITE){
+            //TODO handle the offline favorite query
         }
     }
 

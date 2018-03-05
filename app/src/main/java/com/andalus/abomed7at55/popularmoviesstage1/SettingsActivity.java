@@ -22,6 +22,13 @@ public class SettingsActivity extends AppCompatActivity {
     RadioButton rbPopular;
     @BindView(R.id.rb_top_rated)
     RadioButton rbTopRated;
+    @BindView(R.id.rb_favourite)
+    RadioButton rbFavorite;
+
+    public static final int RESULT_NORMAL = 10;
+    public static final int RESULT_FAVOURITE = 20;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +46,8 @@ public class SettingsActivity extends AppCompatActivity {
             rgSortBy.check(R.id.rb_popular);
         }else if(selectedType == ApiBuilder.SORT_TOP_RATED){
             rgSortBy.check(R.id.rb_top_rated);
+        }else if(selectedType == ApiBuilder.SORT_FAVORITE){
+            rgSortBy.check(R.id.rb_favourite);
         }
 
         rgSortBy.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -49,12 +58,18 @@ public class SettingsActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putInt(getString(R.string.pref_sort),ApiBuilder.SORT_POPULAR);
                     editor.apply();
+                    setResult(RESULT_NORMAL);
                 }else if (id == R.id.rb_top_rated){
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putInt(getString(R.string.pref_sort),ApiBuilder.SORT_TOP_RATED);
                     editor.apply();
+                    setResult(RESULT_NORMAL);
+                }else if (id == R.id.rb_favourite){
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt(getString(R.string.pref_sort),ApiBuilder.SORT_FAVORITE);
+                    editor.apply();
+                    setResult(RESULT_FAVOURITE);
                 }
-                setResult(RESULT_OK);
                 finish();
             }
         });

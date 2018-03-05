@@ -21,6 +21,7 @@ public class DatabaseContract implements BaseColumns {
         public static final String COLUMN_SYNOPSIS = "synopsis";
         public static final String COLUMN_RATING = "rating";
         public static final String COLUMN_DATE = "date";
+        public static final String COLUMN_IMAGE = "image";
 
     }
 }

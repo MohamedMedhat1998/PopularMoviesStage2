@@ -122,7 +122,8 @@ public class DetailsActivity extends AppCompatActivity {
                                     .createContentValues(Long.parseLong(id),selectedMovie.getTitle(),
                                             selectedMovie.getPlot(),
                                             selectedMovie.getRating(),
-                                            selectedMovie.getDate()));
+                                            selectedMovie.getDate(),
+                                            selectedMovie.getPoster()));
                 }
                 editor.apply();
             }
