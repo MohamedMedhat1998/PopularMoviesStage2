@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.andalus.abomed7at55.popularmoviesstage1.DatabaseContract.TableFavourites;
 
@@ -61,7 +62,7 @@ public class MoviesContentProvider extends ContentProvider {
      * @param date     the release date of the selected movie
      * @return a ContentValues object
      */
-    public static ContentValues createContentValues(int id, String name, String synopsis, String rating, String date) {
+    public static ContentValues createContentValues(long id, String name, String synopsis, String rating, String date) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(DatabaseContract._ID, id);
         contentValues.put(TableFavourites.COLUMN_NAME, name);
@@ -101,12 +102,25 @@ public class MoviesContentProvider extends ContentProvider {
                 e.printStackTrace();
             }
         }
+        getContext().getContentResolver().notifyChange(uri,null);
         return uri;
     }
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+        int deleted = -1;
+        if(uriMatcher.match(uri) == SINGLE_MOVIE){
+            try {
+                String idString = uri.getPathSegments().get(1) + "";
+                Log.d("idString",idString);
+                deleted = database.delete(TableFavourites.TABLE_NAME,DatabaseContract._ID + "=?",new String[]{idString});
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        getContext().getContentResolver().notifyChange(uri,null);
+        Log.d("Deleted",deleted + "");
+        return deleted;
     }
 
     @Override

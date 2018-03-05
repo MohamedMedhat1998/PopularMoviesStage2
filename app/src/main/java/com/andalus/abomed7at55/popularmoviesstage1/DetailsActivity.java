@@ -1,10 +1,13 @@
 package com.andalus.abomed7at55.popularmoviesstage1;
 
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -48,6 +51,8 @@ public class DetailsActivity extends AppCompatActivity {
     TextView tvNoReviews;
     @BindView(R.id.tv_no_videos)
     TextView tvNoVideos;
+    @BindView(R.id.iv_star_button)
+    ImageView starButton;
 
     //Rating Colors
     private static final int RATING_HIGHEST = 8;
@@ -59,6 +64,10 @@ public class DetailsActivity extends AppCompatActivity {
 
     private NetworkingManager networkingReview;
     private NetworkingManager networkingVideos;
+
+    ContentResolver contentResolver;
+
+    Movie selectedMovie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +88,45 @@ public class DetailsActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(layoutManager);
         RecyclerView.LayoutManager videoLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         videoRecyclerView.setLayoutManager(videoLayoutManager);
+
+        //Setting up preferences
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        contentResolver = getContentResolver();
+
+        //Setting up initial image for the star button
+        boolean isFavourite = preferences.getBoolean(selectedMovie.getId(),false);
+        if(isFavourite){
+            starButton.setImageResource(android.R.drawable.btn_star_big_on);
+        }else {
+            starButton.setImageResource(android.R.drawable.btn_star_big_off);
+        }
+
+        //starButton clickListener
+        starButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean isFav = preferences.getBoolean(selectedMovie.getId(),false);
+                SharedPreferences.Editor editor = preferences.edit();
+                if(isFav){
+                    editor.putBoolean(selectedMovie.getId(),false);
+                    starButton.setImageResource(android.R.drawable.btn_star_big_off);
+                    //remove from favourite table database
+                    contentResolver.delete(MoviesContentProvider.buildAppUri(id),null,null);
+                }else {
+                    editor.putBoolean(selectedMovie.getId(),true);
+                    starButton.setImageResource(android.R.drawable.btn_star_big_on);
+                    //add to favourite table database
+                    contentResolver.insert(MoviesContentProvider.buildAppUri(id),
+                            MoviesContentProvider
+                                    .createContentValues(Long.parseLong(id),selectedMovie.getTitle(),
+                                            selectedMovie.getPlot(),
+                                            selectedMovie.getRating(),
+                                            selectedMovie.getDate()));
+                }
+                editor.apply();
+            }
+        });
     }
 
     /**
@@ -89,7 +137,7 @@ public class DetailsActivity extends AppCompatActivity {
         //Receiving
         Intent i = getIntent();
         int position = i.getExtras().getInt(getString(R.string.movie_position));
-        Movie selectedMovie = MainActivity.getMovies()[position];
+        selectedMovie = MainActivity.getMovies()[position];
         String title = selectedMovie.getTitle();
         String posterPath = selectedMovie.getPoster();
         String plot = selectedMovie.getPlot();
@@ -228,4 +276,5 @@ public class DetailsActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(intent);
     }
+
 }

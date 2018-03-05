@@ -46,14 +46,7 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
 
         ButterKnife.bind(this);
         //--------------------------------------------------------------------
-        DatabaseManager databaseManager = new DatabaseManager(this);
-        SQLiteDatabase database = databaseManager.getDatabase();
-        Uri myUri = MoviesContentProvider.buildAppUri("55");
-        Log.d("URI" , myUri.toString());
-        ContentResolver resolver = getContentResolver();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(DatabaseContract._ID,55);
-        resolver.insert(myUri,null);
+
         //--------------------------------------------------------------------
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
