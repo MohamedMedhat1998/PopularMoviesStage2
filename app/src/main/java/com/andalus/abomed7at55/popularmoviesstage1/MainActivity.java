@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
     private static final int SETTINGS_REQUEST_CODE = 1;
     private static final int DETAILS_REQUEST_CODE = 2;
 
+    private static final String PARCELABLE_MOVIES = "movies";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,36 +54,47 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
         ButterKnife.bind(this);
 
         contentResolver = getContentResolver();
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int sortType = prefs.getInt(getString(R.string.pref_sort),ApiBuilder.SORT_POPULAR);
         networkingManager = new NetworkingManager();
 
-        if(sortType != ApiBuilder.SORT_FAVORITE){
-            api = ApiBuilder.buildApi(sortType);
-
-            backgroundTask = new MyBackgroundTask(api,this);
-
-            ConnectivityManager cm =
-                    (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo netInfo = cm.getActiveNetworkInfo();
-            if(netInfo != null){
-                backgroundTask.execute();
-            }else {
-                //TODO Show indicator telling the user that there is no connection and the shown movies are those in the favorite
-                favoriteProcess();
-                Toast.makeText(getBaseContext(), R.string.network_issue_message,Toast.LENGTH_LONG).show();
-            }
+        if(savedInstanceState != null){
+            movies = (Movie[]) savedInstanceState.getParcelableArray(PARCELABLE_MOVIES);
+            movieAdapter = new MovieAdapter(movies,this);
+            mRecyclerView.setAdapter(movieAdapter);
         }else{
-            favoriteProcess();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            int sortType = prefs.getInt(getString(R.string.pref_sort),ApiBuilder.SORT_POPULAR);
+
+            if(sortType != ApiBuilder.SORT_FAVORITE){
+                api = ApiBuilder.buildApi(sortType);
+
+                backgroundTask = new MyBackgroundTask(api,this);
+
+                ConnectivityManager cm =
+                        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo netInfo = cm.getActiveNetworkInfo();
+                if(netInfo != null){
+                    backgroundTask.execute();
+                }else {
+                    favoriteProcess();
+                    Toast.makeText(getBaseContext(), R.string.network_issue_message,Toast.LENGTH_LONG).show();
+                }
+            }else{
+                favoriteProcess();
+            }
         }
 
         RecyclerView.LayoutManager layoutManager
                 = new GridLayoutManager(MainActivity.this,2, LinearLayoutManager.VERTICAL,false);
 
         mRecyclerView.setLayoutManager(layoutManager);
-
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArray(PARCELABLE_MOVIES,movies);
+    }
+
 
     @Override
     public void onItemClicked(int itemPosition) {
@@ -115,7 +129,6 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
                 refreshAdapter();
             }else {
                 favoriteProcess();
-                //TODO Show indicator telling the user that there is no connection and the shown movies are those in the favorite
                 Toast.makeText(getBaseContext(), R.string.network_issue_message,Toast.LENGTH_LONG).show();
             }
         }else if(requestCode == SETTINGS_REQUEST_CODE && resultCode == SettingsActivity.RESULT_FAVOURITE){

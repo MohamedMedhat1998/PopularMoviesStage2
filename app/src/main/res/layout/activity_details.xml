@@ -177,12 +177,12 @@
         android:id="@+id/iv_star_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/iv_poster"
+        app:layout_constraintEnd_toEndOf="@+id/iv_poster"
         app:layout_constraintStart_toStartOf="@+id/iv_poster"
-        app:layout_constraintTop_toTopOf="@+id/iv_poster"
-        app:srcCompat="@android:drawable/btn_star"
-        android:layout_marginLeft="8dp" />
+        app:srcCompat="@android:drawable/btn_star" />
 
 </android.support.constraint.ConstraintLayout>
 </ScrollView>
