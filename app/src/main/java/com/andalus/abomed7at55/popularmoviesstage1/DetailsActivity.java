@@ -3,7 +3,6 @@ package com.andalus.abomed7at55.popularmoviesstage1;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -24,7 +23,6 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -53,6 +51,8 @@ public class DetailsActivity extends AppCompatActivity {
     TextView tvNoVideos;
     @BindView(R.id.iv_star_button)
     ImageView starButton;
+
+    public static final int RESULT_FAVORITE_CHANGED = 50;
 
     //Rating Colors
     private static final int RATING_HIGHEST = 8;
@@ -126,6 +126,10 @@ public class DetailsActivity extends AppCompatActivity {
                                             selectedMovie.getPoster()));
                 }
                 editor.apply();
+
+                if(preferences.getInt(getString(R.string.pref_sort),ApiBuilder.SORT_FAVORITE) == ApiBuilder.SORT_FAVORITE){
+                    setResult(RESULT_FAVORITE_CHANGED);
+                }
             }
         });
     }
@@ -140,7 +144,7 @@ public class DetailsActivity extends AppCompatActivity {
         int position = i.getExtras().getInt(getString(R.string.movie_position));
         selectedMovie = MainActivity.getMovies()[position];
         String title = selectedMovie.getTitle();
-        String posterPath = selectedMovie.getPoster();
+        String posterPath = selectedMovie.getFullPoster();
         String plot = selectedMovie.getPlot();
         String rating = selectedMovie.getRating();
         String releaseDate = selectedMovie.getDate();

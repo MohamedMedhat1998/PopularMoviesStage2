@@ -49,7 +49,6 @@ public class MoviesContentProvider extends ContentProvider {
     public static Uri buildAppUri() {
         Uri.Builder builder = Uri.parse(SCHEME + AUTHORITY)
                 .buildUpon()
-                .appendPath(PATH_SINGLE_MOVIE)
                 .appendPath(PATH_ALL_MOVIES);
         return builder.build();
     }

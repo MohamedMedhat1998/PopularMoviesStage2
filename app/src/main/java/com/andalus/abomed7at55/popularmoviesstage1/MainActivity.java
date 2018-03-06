@@ -1,16 +1,12 @@
 package com.andalus.abomed7at55.popularmoviesstage1;
 
-import android.content.ContentProvider;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +19,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.andalus.abomed7at55.popularmoviesstage1.DatabaseContract.TableFavourites;
+
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -33,13 +31,17 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity implements AdapterClickListener , MyBackgroundTaskCallBacks<String,String> {
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
+
     private static Movie[] movies;
-    String api;
-    NetworkingManager networkingManager;
-    MovieAdapter movieAdapter;
-    MyBackgroundTask backgroundTask;
+
+    private String api;
+    private NetworkingManager networkingManager;
+    private MovieAdapter movieAdapter;
+    private MyBackgroundTask backgroundTask;
+    private ContentResolver contentResolver;
 
     private static final int SETTINGS_REQUEST_CODE = 1;
+    private static final int DETAILS_REQUEST_CODE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,17 +49,15 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-        //--------------------------------------------------------------------
 
-        //--------------------------------------------------------------------
+        contentResolver = getContentResolver();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int sortType = prefs.getInt(getString(R.string.pref_sort),ApiBuilder.SORT_POPULAR);
+        networkingManager = new NetworkingManager();
 
         if(sortType != ApiBuilder.SORT_FAVORITE){
             api = ApiBuilder.buildApi(sortType);
-
-            networkingManager = new NetworkingManager();
 
             backgroundTask = new MyBackgroundTask(api,this);
 
@@ -67,11 +67,12 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
             if(netInfo != null){
                 backgroundTask.execute();
             }else {
-                //TODO query the favorite here if there is no connection
+                //TODO Show indicator telling the user that there is no connection and the shown movies are those in the favorite
+                favoriteProcess();
                 Toast.makeText(getBaseContext(), R.string.network_issue_message,Toast.LENGTH_LONG).show();
             }
         }else{
-            //TODO query the favorite if the selected sort was ApiBuilder.SORT_FAVORITE
+            favoriteProcess();
         }
 
         RecyclerView.LayoutManager layoutManager
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
     public void onItemClicked(int itemPosition) {
         Intent i = new Intent(MainActivity.this,DetailsActivity.class);
         i.putExtra(getString(R.string.movie_position),itemPosition);
-        startActivity(i);
+        startActivityForResult(i,DETAILS_REQUEST_CODE);
     }
 
 
@@ -113,10 +114,14 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
             if(netInfo != null){
                 refreshAdapter();
             }else {
+                favoriteProcess();
+                //TODO Show indicator telling the user that there is no connection and the shown movies are those in the favorite
                 Toast.makeText(getBaseContext(), R.string.network_issue_message,Toast.LENGTH_LONG).show();
             }
         }else if(requestCode == SETTINGS_REQUEST_CODE && resultCode == SettingsActivity.RESULT_FAVOURITE){
-            //TODO handle the offline favorite query
+            favoriteProcess();
+        }else if(requestCode == DETAILS_REQUEST_CODE && resultCode == DetailsActivity.RESULT_FAVORITE_CHANGED){
+            favoriteProcess();
         }
     }
 
@@ -158,5 +163,35 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * This method runs the adapter when the selected sort type is SORT_FAVOURITE
+     */
+    private void favoriteProcess(){
+        Cursor cursor = contentResolver.query(MoviesContentProvider.buildAppUri(),null,null,null,null);
+        cursor.moveToFirst();
+        int cnt = cursor.getCount();
+        Movie[] favoriteMovies = new Movie[cnt];
+        String originalTitle ,  posterPath ,  aPlotSynopsis, userRating, releaseDate, movieId;
+        for(int i = 0 ; i < cnt ; i++){
+            cursor.moveToPosition(i);
+            originalTitle = cursor.getString(cursor.getColumnIndex(TableFavourites.COLUMN_NAME));
+            posterPath = cursor.getString(cursor.getColumnIndex(TableFavourites.COLUMN_IMAGE));
+            aPlotSynopsis = cursor.getString(cursor.getColumnIndex(TableFavourites.COLUMN_SYNOPSIS));
+            userRating = cursor.getString(cursor.getColumnIndex(TableFavourites.COLUMN_RATING));
+            releaseDate = cursor.getString(cursor.getColumnIndex(TableFavourites.COLUMN_DATE));
+            movieId = "" + cursor.getLong(cursor.getColumnIndex(DatabaseContract._ID));
+            favoriteMovies[i] = new Movie(originalTitle,posterPath,aPlotSynopsis,userRating,releaseDate,movieId);
+        }
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(getString(R.string.pref_sort),ApiBuilder.SORT_FAVORITE);
+        editor.apply();
+
+        movies = favoriteMovies;
+        movieAdapter = new MovieAdapter(movies,this);
+        mRecyclerView.setAdapter(movieAdapter);
     }
 }

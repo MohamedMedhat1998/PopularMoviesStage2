@@ -30,7 +30,7 @@ public class Movie {
         return title;
     }
 
-    public String getPoster() {
+    public String getFullPoster() {
         return BASE_URL+poster;
     }
 
@@ -44,6 +44,10 @@ public class Movie {
 
     public String getDate() {
         return date;
+    }
+
+    public String getPoster(){
+        return poster;
     }
 
     public String getId(){
