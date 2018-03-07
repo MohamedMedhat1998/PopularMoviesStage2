@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -84,9 +85,24 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
         }
 
         RecyclerView.LayoutManager layoutManager
-                = new GridLayoutManager(MainActivity.this,2, LinearLayoutManager.VERTICAL,false);
+                = new GridLayoutManager(MainActivity.this,numberOfColumns());
 
         mRecyclerView.setLayoutManager(layoutManager);
+    }
+
+    /**
+     * This method is used to calculate the number of columns in the RecyclerView GridLayoutManager
+     * dynamically
+     * @return the suitable number of columns
+     */
+    private int numberOfColumns() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int widthDivider = 400;
+        int width = displayMetrics.widthPixels;
+        int nColumns = width / widthDivider;
+        if (nColumns < 2) return 2;
+        return nColumns;
     }
 
     @Override
