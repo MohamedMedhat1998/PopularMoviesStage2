@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements AdapterClickListe
         networkingManager = new NetworkingManager();
 
         if(savedInstanceState != null){
-            movies = (Movie[]) savedInstanceState.getParcelableArray(PARCELABLE_MOVIES);
+            savedInstanceState.getParcelableArray(PARCELABLE_MOVIES);
             movieAdapter = new MovieAdapter(movies,this);
             mRecyclerView.setAdapter(movieAdapter);
         }else{
