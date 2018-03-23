@@ -42,7 +42,7 @@ public class DetailsActivity extends AppCompatActivity {
     @BindView(R.id.tv_release_date)
     TextView tvReleaseDate;
     @BindView(R.id.review_recycler_view)
-    RecyclerView mRecyclerView;
+    RecyclerView reviewsRecyclerView;
     @BindView(R.id.rv_videos)
     RecyclerView videoRecyclerView;
     @BindView(R.id.tv_no_reviews)
@@ -60,14 +60,26 @@ public class DetailsActivity extends AppCompatActivity {
     private static final int RATING_NORMAL = 4;
     private static final int RATING_UNDER_NORMAL = 2;
 
+    private static final String REVIEWS_KEY = "reviews_key";
+    private static final String VIDEOS_KEY = "videos_key";
+
     private String id;
 
     private NetworkingManager networkingReview;
     private NetworkingManager networkingVideos;
 
-    ContentResolver contentResolver;
+    private ContentResolver contentResolver;
 
-    Movie selectedMovie;
+    private Movie selectedMovie;
+
+    private static MovieReview[] movieReviews;
+    private static MovieVideo[] movieVideos;
+
+    private ReviewsAdapter reviewsAdapter;
+    private VideosAdapter videosAdapter;
+
+    private AdapterClickListener reviewsAdapterClickListener;
+    private AdapterClickListener videosAdapterClickListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,9 +95,37 @@ public class DetailsActivity extends AppCompatActivity {
 
         receiveAndShowData();
 
+        //This is the reviews click listener
+        reviewsAdapterClickListener = new AdapterClickListener() {
+            @Override
+            public void onItemClicked(int itemPosition) {
+                openLink(movieReviews[itemPosition].getUrl());
+            }
+        };
+        //This is the videos click listener
+        videosAdapterClickListener = new AdapterClickListener() {
+            @Override
+            public void onItemClicked(int itemPosition) {
+                openLink(MovieVideo.YOUTUBE_BASE + movieVideos[itemPosition].getKey());
+            }
+        };
+
+        if(savedInstanceState != null){
+            Log.d("Bundle","Not equal null");
+            savedInstanceState.getParcelableArray(REVIEWS_KEY);
+            savedInstanceState.getParcelableArray(VIDEOS_KEY);
+            Log.d("During loading",movieReviews.length + "");
+            reviewsAdapter = new ReviewsAdapter(movieReviews,reviewsAdapterClickListener);
+            videosAdapter = new VideosAdapter(movieVideos,videosAdapterClickListener);
+            reviewsRecyclerView.setAdapter(reviewsAdapter);
+            videoRecyclerView.setAdapter(videosAdapter);
+        }else{
+            setUpReviewsAndVideos();
+        }
+
         //RecyclerView setting up
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(layoutManager);
+        reviewsRecyclerView.setLayoutManager(layoutManager);
         RecyclerView.LayoutManager videoLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         videoRecyclerView.setLayoutManager(videoLayoutManager);
 
@@ -172,6 +212,13 @@ public class DetailsActivity extends AppCompatActivity {
         tvRating.setText(rating);
         tvRating.setTextColor(ratingColor);
         tvReleaseDate.setText(releaseDate);
+    }
+
+    /**
+     * This method is used to set up the adapter of both reviews and videos recycler views.
+     * It connects to the internet to bring the required data
+     */
+    private void setUpReviewsAndVideos(){
         ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         if(networkInfo != null){
@@ -212,17 +259,12 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onTaskFinished(String result) {
                 try {
-                    final MovieReview[] movieReviews = DataPicker.pickReviews(result);
+                    movieReviews = DataPicker.pickReviews(result);
                     if(movieReviews.length == 0){
                         tvNoReviews.setVisibility(View.VISIBLE);
                     }
-                    ReviewsAdapter reviewsAdapter = new ReviewsAdapter(movieReviews, new AdapterClickListener() {
-                        @Override
-                        public void onItemClicked(int itemPosition) {
-                            openLink(movieReviews[itemPosition].getUrl());
-                        }
-                    });
-                    mRecyclerView.setAdapter(reviewsAdapter);
+                    reviewsAdapter = new ReviewsAdapter(movieReviews,reviewsAdapterClickListener);
+                    reviewsRecyclerView.setAdapter(reviewsAdapter);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -253,16 +295,11 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onTaskFinished(String result) {
                 try {
-                    final MovieVideo[] movieVideos = DataPicker.pickVideos(result);
+                    movieVideos = DataPicker.pickVideos(result);
                     if(movieVideos.length == 0){
                         tvNoVideos.setVisibility(View.VISIBLE);
                     }
-                    VideosAdapter videosAdapter = new VideosAdapter(movieVideos, new AdapterClickListener() {
-                        @Override
-                        public void onItemClicked(int itemPosition) {
-                            openLink(MovieVideo.YOUTUBE_BASE + movieVideos[itemPosition].getKey());
-                        }
-                    });
+                    videosAdapter = new VideosAdapter(movieVideos, videosAdapterClickListener);
                     videoRecyclerView.setAdapter(videosAdapter);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -279,7 +316,19 @@ public class DetailsActivity extends AppCompatActivity {
      */
     private void openLink(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        startActivity(intent);
+        try {
+            startActivity(intent);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArray(REVIEWS_KEY,movieReviews);
+        Log.d("During saving",movieReviews.length + "");
+        outState.putParcelableArray(VIDEOS_KEY,movieVideos);
     }
 
 }
