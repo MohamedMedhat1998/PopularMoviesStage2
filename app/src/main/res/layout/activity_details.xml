@@ -9,9 +9,9 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/constraint_layou"
     android:orientation="vertical"
     tools:context="com.andalus.abomed7at55.popularmoviesstage1.DetailsActivity">
-    <!--TODO improve the UI -->
     <TextView
         android:id="@+id/tv_original_title"
         android:layout_width="0dp"

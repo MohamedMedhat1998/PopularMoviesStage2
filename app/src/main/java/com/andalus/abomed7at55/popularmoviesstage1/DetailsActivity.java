@@ -60,6 +60,9 @@ public class DetailsActivity extends AppCompatActivity {
     private static final int RATING_NORMAL = 4;
     private static final int RATING_UNDER_NORMAL = 2;
 
+    private boolean isThereReviews = true;
+    private boolean isThereVideos = true;
+
     private static final String REVIEWS_KEY = "reviews_key";
     private static final String VIDEOS_KEY = "videos_key";
 
@@ -111,14 +114,18 @@ public class DetailsActivity extends AppCompatActivity {
         };
 
         if(savedInstanceState != null){
-            Log.d("Bundle","Not equal null");
             savedInstanceState.getParcelableArray(REVIEWS_KEY);
             savedInstanceState.getParcelableArray(VIDEOS_KEY);
-            Log.d("During loading",movieReviews.length + "");
             reviewsAdapter = new ReviewsAdapter(movieReviews,reviewsAdapterClickListener);
             videosAdapter = new VideosAdapter(movieVideos,videosAdapterClickListener);
             reviewsRecyclerView.setAdapter(reviewsAdapter);
             videoRecyclerView.setAdapter(videosAdapter);
+            if(!isThereReviews){
+                tvNoReviews.setVisibility(View.VISIBLE);
+            }
+            if(!isThereVideos){
+                tvNoVideos.setVisibility(View.VISIBLE);
+            }
         }else{
             setUpReviewsAndVideos();
         }
@@ -261,6 +268,7 @@ public class DetailsActivity extends AppCompatActivity {
                 try {
                     movieReviews = DataPicker.pickReviews(result);
                     if(movieReviews.length == 0){
+                        isThereReviews = false;
                         tvNoReviews.setVisibility(View.VISIBLE);
                     }
                     reviewsAdapter = new ReviewsAdapter(movieReviews,reviewsAdapterClickListener);
@@ -297,6 +305,7 @@ public class DetailsActivity extends AppCompatActivity {
                 try {
                     movieVideos = DataPicker.pickVideos(result);
                     if(movieVideos.length == 0){
+                        isThereVideos = false;
                         tvNoVideos.setVisibility(View.VISIBLE);
                     }
                     videosAdapter = new VideosAdapter(movieVideos, videosAdapterClickListener);
