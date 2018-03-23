@@ -45,12 +45,21 @@ public class DetailsActivity extends AppCompatActivity {
     RecyclerView reviewsRecyclerView;
     @BindView(R.id.rv_videos)
     RecyclerView videoRecyclerView;
-    @BindView(R.id.tv_no_reviews)
+    /*@BindView(R.id.tv_no_reviews)
     TextView tvNoReviews;
     @BindView(R.id.tv_no_videos)
-    TextView tvNoVideos;
+    TextView tvNoVideos;*/
     @BindView(R.id.iv_star_button)
     ImageView starButton;
+
+    @BindView(R.id.view)
+    View view1;
+    @BindView(R.id.view2)
+    View view2;
+    @BindView(R.id.tv_label_review)
+    TextView labelReview;
+    @BindView(R.id.tv_lbl_trailer)
+    TextView labelTrailer;
 
     public static final int RESULT_FAVORITE_CHANGED = 50;
 
@@ -65,6 +74,9 @@ public class DetailsActivity extends AppCompatActivity {
 
     private static final String REVIEWS_KEY = "reviews_key";
     private static final String VIDEOS_KEY = "videos_key";
+
+    private static final String REVIEW_STATUS = "review_status";
+    private static final String TRAILER_STATUS = "trailer_status";
 
     private String id;
 
@@ -120,11 +132,17 @@ public class DetailsActivity extends AppCompatActivity {
             videosAdapter = new VideosAdapter(movieVideos,videosAdapterClickListener);
             reviewsRecyclerView.setAdapter(reviewsAdapter);
             videoRecyclerView.setAdapter(videosAdapter);
+            isThereVideos = savedInstanceState.getBoolean(TRAILER_STATUS);
+            isThereReviews = savedInstanceState.getBoolean(REVIEW_STATUS);
             if(!isThereReviews){
-                tvNoReviews.setVisibility(View.VISIBLE);
+                //tvNoReviews.setVisibility(View.VISIBLE);
+                labelReview.setVisibility(View.INVISIBLE);
+                view2.setVisibility(View.INVISIBLE);
             }
             if(!isThereVideos){
-                tvNoVideos.setVisibility(View.VISIBLE);
+                //tvNoVideos.setVisibility(View.VISIBLE);
+                labelTrailer.setVisibility(View.INVISIBLE);
+                view1.setVisibility(View.INVISIBLE);
             }
         }else{
             setUpReviewsAndVideos();
@@ -269,7 +287,9 @@ public class DetailsActivity extends AppCompatActivity {
                     movieReviews = DataPicker.pickReviews(result);
                     if(movieReviews.length == 0){
                         isThereReviews = false;
-                        tvNoReviews.setVisibility(View.VISIBLE);
+                        //tvNoReviews.setVisibility(View.VISIBLE);
+                        labelReview.setVisibility(View.INVISIBLE);
+                        view2.setVisibility(View.INVISIBLE);
                     }
                     reviewsAdapter = new ReviewsAdapter(movieReviews,reviewsAdapterClickListener);
                     reviewsRecyclerView.setAdapter(reviewsAdapter);
@@ -306,7 +326,9 @@ public class DetailsActivity extends AppCompatActivity {
                     movieVideos = DataPicker.pickVideos(result);
                     if(movieVideos.length == 0){
                         isThereVideos = false;
-                        tvNoVideos.setVisibility(View.VISIBLE);
+                        //tvNoVideos.setVisibility(View.VISIBLE);
+                        labelTrailer.setVisibility(View.INVISIBLE);
+                        view1.setVisibility(View.INVISIBLE);
                     }
                     videosAdapter = new VideosAdapter(movieVideos, videosAdapterClickListener);
                     videoRecyclerView.setAdapter(videosAdapter);
@@ -338,6 +360,9 @@ public class DetailsActivity extends AppCompatActivity {
         outState.putParcelableArray(REVIEWS_KEY,movieReviews);
         Log.d("During saving",movieReviews.length + "");
         outState.putParcelableArray(VIDEOS_KEY,movieVideos);
+        outState.putBoolean(REVIEW_STATUS,isThereReviews);
+        outState.putBoolean(TRAILER_STATUS,isThereVideos);
+
     }
 
 }
