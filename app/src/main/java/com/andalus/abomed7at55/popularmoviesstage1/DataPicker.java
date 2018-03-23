@@ -6,6 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 /**
  * This class is used to extract real data from JSON Objects
  */
@@ -61,11 +63,11 @@ public class DataPicker {
      * @return Review array holding usable data
      * @throws JSONException if the json passed was incorrect
      */
-    public static MovieReview[] pickReviews(String jsonData) throws JSONException {
+    public static ArrayList<MovieReview> pickReviews(String jsonData) throws JSONException {
         JSONObject mainObject = new JSONObject(jsonData);
         JSONArray resultArray = mainObject.getJSONArray(RESULT_ARRAY);
         int n = resultArray.length();
-        MovieReview[] reviews = new MovieReview[n];
+        ArrayList<MovieReview> reviews = new ArrayList<>();
         JSONObject tempObject;
         String id,author,content,url;
         for (int i = 0 ; i < n ; i++){
@@ -74,7 +76,7 @@ public class DataPicker {
             author = tempObject.getString(AUTHOR);
             content = tempObject.getString(CONTENT);
             url = tempObject.getString(URL_MOVIE);
-            reviews[i] = new MovieReview(id,author,content,url);
+            reviews.add(new MovieReview(id,author,content,url));
         }
         return reviews;
     }
@@ -85,18 +87,18 @@ public class DataPicker {
      * @return Video array holding usable data
      * @throws JSONException if the json passed was incorrect
      */
-    public static MovieVideo[] pickVideos(String jsonData) throws JSONException{
+    public static ArrayList<MovieVideo> pickVideos(String jsonData) throws JSONException{
         JSONObject mainObject = new JSONObject(jsonData);
         JSONArray resultArray = mainObject.getJSONArray(RESULT_ARRAY);
         int n = resultArray.length();
-        MovieVideo[] videos = new MovieVideo[n];
+        ArrayList<MovieVideo> videos = new ArrayList<>();
         JSONObject tempObject;
         String name,key;
         for (int i = 0 ; i < n ; i++){
             tempObject = resultArray.getJSONObject(i);
             name = tempObject.getString(NAME);
             key = tempObject.getString(KEY);
-            videos[i] = new MovieVideo(name,key);
+            videos.add(new MovieVideo(name,key));
         }
         return videos;
     }

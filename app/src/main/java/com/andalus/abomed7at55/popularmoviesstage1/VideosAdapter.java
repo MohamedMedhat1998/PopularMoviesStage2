@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -16,10 +18,10 @@ import butterknife.ButterKnife;
 
 public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideoViewHolder> {
     //Data
-    private MovieVideo[] videos;
+    private ArrayList<MovieVideo> videos;
     private AdapterClickListener listener;
 
-    VideosAdapter(MovieVideo[] videosData,AdapterClickListener clickListener){
+    VideosAdapter(ArrayList<MovieVideo> videosData,AdapterClickListener clickListener){
         videos = videosData;
         listener = clickListener;
     }
@@ -34,12 +36,12 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideoViewH
 
     @Override
     public void onBindViewHolder(VideoViewHolder holder, int position) {
-        holder.tvTrailerLabel.setText(videos[position].getName());
+        holder.tvTrailerLabel.setText(videos.get(position).getName());
     }
 
     @Override
     public int getItemCount() {
-        return videos.length;
+        return videos.size();
     }
 
     public class VideoViewHolder extends RecyclerView.ViewHolder{

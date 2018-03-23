@@ -25,6 +25,7 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,10 +46,6 @@ public class DetailsActivity extends AppCompatActivity {
     RecyclerView reviewsRecyclerView;
     @BindView(R.id.rv_videos)
     RecyclerView videoRecyclerView;
-    /*@BindView(R.id.tv_no_reviews)
-    TextView tvNoReviews;
-    @BindView(R.id.tv_no_videos)
-    TextView tvNoVideos;*/
     @BindView(R.id.iv_star_button)
     ImageView starButton;
 
@@ -87,8 +84,8 @@ public class DetailsActivity extends AppCompatActivity {
 
     private Movie selectedMovie;
 
-    private static MovieReview[] movieReviews;
-    private static MovieVideo[] movieVideos;
+    private ArrayList<MovieReview> movieReviews;
+    private ArrayList<MovieVideo> movieVideos;
 
     private ReviewsAdapter reviewsAdapter;
     private VideosAdapter videosAdapter;
@@ -114,26 +111,31 @@ public class DetailsActivity extends AppCompatActivity {
         reviewsAdapterClickListener = new AdapterClickListener() {
             @Override
             public void onItemClicked(int itemPosition) {
-                openLink(movieReviews[itemPosition].getUrl());
+                openLink(movieReviews.get(itemPosition).getUrl());
             }
         };
         //This is the videos click listener
         videosAdapterClickListener = new AdapterClickListener() {
             @Override
             public void onItemClicked(int itemPosition) {
-                openLink(MovieVideo.YOUTUBE_BASE + movieVideos[itemPosition].getKey());
+                openLink(MovieVideo.YOUTUBE_BASE + movieVideos.get(itemPosition).getKey());
             }
         };
 
         if(savedInstanceState != null){
-            savedInstanceState.getParcelableArray(REVIEWS_KEY);
-            savedInstanceState.getParcelableArray(VIDEOS_KEY);
-            reviewsAdapter = new ReviewsAdapter(movieReviews,reviewsAdapterClickListener);
-            videosAdapter = new VideosAdapter(movieVideos,videosAdapterClickListener);
-            reviewsRecyclerView.setAdapter(reviewsAdapter);
-            videoRecyclerView.setAdapter(videosAdapter);
+            movieReviews = savedInstanceState.getParcelableArrayList(REVIEWS_KEY);
+            movieVideos = savedInstanceState.getParcelableArrayList(VIDEOS_KEY);
+            if(movieReviews != null){
+                reviewsAdapter = new ReviewsAdapter(movieReviews,reviewsAdapterClickListener);
+                reviewsRecyclerView.setAdapter(reviewsAdapter);
+            }
+            if(movieVideos != null){
+                videosAdapter = new VideosAdapter(movieVideos,videosAdapterClickListener);
+                videoRecyclerView.setAdapter(videosAdapter);
+            }
             isThereVideos = savedInstanceState.getBoolean(TRAILER_STATUS);
             isThereReviews = savedInstanceState.getBoolean(REVIEW_STATUS);
+            Log.d("HERE","We are here!" + isThereVideos);
             if(!isThereReviews){
                 //tvNoReviews.setVisibility(View.VISIBLE);
                 labelReview.setVisibility(View.INVISIBLE);
@@ -197,6 +199,33 @@ public class DetailsActivity extends AppCompatActivity {
                 }
             }
         });
+        //Hiding the review and the trailer texts if there is no internet connection and no data to show
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        if(networkInfo == null){
+            if(movieVideos == null){
+                labelTrailer.setVisibility(View.INVISIBLE);
+                view1.setVisibility(View.INVISIBLE);
+                isThereVideos = false;
+            }else{
+                if(movieVideos.size() == 0){
+                    labelTrailer.setVisibility(View.INVISIBLE);
+                    view1.setVisibility(View.INVISIBLE);
+                    isThereVideos = false;
+                }
+            }
+            if(movieReviews == null){
+                labelReview.setVisibility(View.INVISIBLE);
+                view2.setVisibility(View.INVISIBLE);
+                isThereReviews = false;
+            }else{
+                if(movieReviews.size() == 0){
+                    labelReview.setVisibility(View.INVISIBLE);
+                    view2.setVisibility(View.INVISIBLE);
+                    isThereReviews = false;
+                }
+            }
+        }
     }
 
     /**
@@ -285,7 +314,7 @@ public class DetailsActivity extends AppCompatActivity {
             public void onTaskFinished(String result) {
                 try {
                     movieReviews = DataPicker.pickReviews(result);
-                    if(movieReviews.length == 0){
+                    if(movieReviews.size() == 0){
                         isThereReviews = false;
                         //tvNoReviews.setVisibility(View.VISIBLE);
                         labelReview.setVisibility(View.INVISIBLE);
@@ -324,7 +353,7 @@ public class DetailsActivity extends AppCompatActivity {
             public void onTaskFinished(String result) {
                 try {
                     movieVideos = DataPicker.pickVideos(result);
-                    if(movieVideos.length == 0){
+                    if(movieVideos.size() == 0){
                         isThereVideos = false;
                         //tvNoVideos.setVisibility(View.VISIBLE);
                         labelTrailer.setVisibility(View.INVISIBLE);
@@ -357,9 +386,8 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArray(REVIEWS_KEY,movieReviews);
-        Log.d("During saving",movieReviews.length + "");
-        outState.putParcelableArray(VIDEOS_KEY,movieVideos);
+        outState.putParcelableArrayList(REVIEWS_KEY,movieReviews);
+        outState.putParcelableArrayList(VIDEOS_KEY,movieVideos);
         outState.putBoolean(REVIEW_STATUS,isThereReviews);
         outState.putBoolean(TRAILER_STATUS,isThereVideos);
 

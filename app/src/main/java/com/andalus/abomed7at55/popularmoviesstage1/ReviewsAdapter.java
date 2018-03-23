@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -16,14 +18,14 @@ import butterknife.ButterKnife;
 
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsViewHolder>{
     //Data
-    private MovieReview[] reviews;
+    private ArrayList<MovieReview> reviews;
     private AdapterClickListener mClickListener;
 
     /**
      * This constructor is used to set the adapter's data
      * @param reviewsData the array of reviews data
      */
-    ReviewsAdapter(MovieReview[] reviewsData,AdapterClickListener clickListener){
+    ReviewsAdapter(ArrayList<MovieReview> reviewsData,AdapterClickListener clickListener){
         reviews = reviewsData;
         mClickListener = clickListener;
     }
@@ -38,13 +40,13 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
 
     @Override
     public void onBindViewHolder(ReviewsViewHolder holder, int position) {
-        holder.tvAuthor.setText(reviews[position].getAuthor());
-        holder.tvReview.setText(reviews[position].getContent());
+        holder.tvAuthor.setText(reviews.get(position).getAuthor());
+        holder.tvReview.setText(reviews.get(position).getContent());
     }
 
     @Override
     public int getItemCount() {
-        return reviews.length;
+        return reviews.size();
     }
 
     /**
